@@ -16,6 +16,10 @@ CONFIG_FILE=$1       # First argument
 WANDB_KEY=$2        # Second argument
 
 
+# === Activate conda environment ===
+source ~/.bashrc
+conda activate nanofm
+
 # === Initialization ===
 set -x
 cat $0
@@ -26,6 +30,9 @@ export NCCL_DEBUG=INFO
 
 # === Run main script ===
 srun bash -c "
+  source ~/.bashrc
+  conda activate nanofm
+
   TORCHRUN_ARGS=\"--node-rank=\${SLURM_PROCID} \
      --master-addr=\${MASTER_ADDR} \
      --master-port=\${MASTER_PORT} \
