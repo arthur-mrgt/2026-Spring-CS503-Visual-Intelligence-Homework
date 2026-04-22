@@ -65,10 +65,13 @@ class RectifiedFlow:
         # Use logit-normal (self.ln=True) or uniform (self.ln=False) sampling.
         # Ensure t has shape (b,) and is on the same device as x.
         if self.ln:
-            nt = ???
-            t = ???
+            # TODO: Exercise 7.1
+            nt = torch.randn(b, device=x.device)
+            # TODO: Exercise 7.1
+            t = torch.sigmoid(nt)
         else:
-            t = ???
+            # TODO: Exercise 7.1
+            t = torch.rand(b, device=x.device)
 
         # Reshape t for broadcasting with spatial dimensions: (b,) -> (b, 1, 1, 1)
         texp = t.view([b, *([1] * len(x.shape[1:]))])
@@ -77,16 +80,20 @@ class RectifiedFlow:
         # Exercise 7.2: Compute the interpolated (noisy) samples z_t.
         # ============================================================
         # Use texp (the reshaped t) for broadcasting with spatial dimensions.
-        z1 = ???
-        zt = ???
+        # TODO: Exercise 7.2
+        z1 = torch.randn_like(x)
+        # TODO: Exercise 7.2
+        zt = (1.0 - texp) * x + texp * z1
 
         # ============================================================
         # Exercise 7.3: Predict velocity and compute MSE loss.
         # ============================================================
         # The target is the straight-line velocity from data to noise.
         # Average the squared error over spatial dimensions, keeping the batch dimension.
-        vtheta = ???
-        batchwise_mse = ???
+        # TODO: Exercise 7.3
+        vtheta = self.model(zt, t, cond)
+        # TODO: Exercise 7.3
+        batchwise_mse = ((vtheta - (z1 - x)) ** 2).mean(dim=tuple(range(1, x.ndim)))
 
         # Logging: record per-timestep losses (no need to modify this)
         tlist = batchwise_mse.detach().cpu().reshape(-1).tolist()
@@ -127,20 +134,24 @@ class RectifiedFlow:
             # ============================================================
             # Exercise 11.1: Get the conditional velocity prediction.
             # ============================================================
-            vc = ???
+            # TODO: Exercise 11.1
+            vc = self.model(z, t, cond)
 
             # ============================================================
             # Exercise 11.2: Apply classifier-free guidance (if null_cond is given).
             # ============================================================
             # Refer to Section 10 in the notebook for the CFG formula.
             if null_cond is not None:
-                vu = ???
-                vc = ???
+                # TODO: Exercise 11.2
+                vu = self.model(z, t, null_cond)
+                # TODO: Exercise 11.2
+                vc = vu + cfg * (vc - vu)
 
             # ============================================================
             # Exercise 11.3: Euler integration step.
             # ============================================================
-            z = ???
+            # TODO: Exercise 11.3
+            z = z - dt * vc
 
             images.append(z)
 

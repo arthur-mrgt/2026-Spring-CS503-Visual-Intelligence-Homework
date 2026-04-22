@@ -20,7 +20,8 @@ def modulate(x, shift, scale):
         Modulated tensor of shape (B, seq_len, D)
     """
     # Exercise 6.1
-    return ???
+    # TODO: Exercise 6.1
+    return x * (1 + scale[:, None, :]) + shift[:, None, :]
 
 
 class TimestepEmbedder(nn.Module):
@@ -85,7 +86,8 @@ class LabelEmbedder(nn.Module):
         """
         if force_drop_ids is None:
             # Exercise 6.2
-            drop_ids = ???
+            # TODO: Exercise 6.2
+            drop_ids = torch.rand(labels.shape[0]) < self.dropout_prob
             drop_ids = drop_ids.to(labels.device)
         else:
             drop_ids = force_drop_ids == 1
@@ -238,7 +240,21 @@ class TransformerBlock(nn.Module):
         """
         if adaln_input is not None:
             # Exercise 6.3
-            ???
+            # TODO: Exercise 6.3
+            (
+                shift_msa,
+                scale_msa,
+                gate_msa,
+                shift_mlp,
+                scale_mlp,
+                gate_mlp,
+            ) = self.adaLN_modulation(adaln_input).chunk(6, dim=1)
+            x = x + gate_msa[:, None, :] * self.attention(
+                modulate(self.attention_norm(x), shift_msa, scale_msa), freqs_cis
+            )
+            x = x + gate_mlp[:, None, :] * self.feed_forward(
+                modulate(self.ffn_norm(x), shift_mlp, scale_mlp)
+            )
         else:
             x = x + self.attention(self.attention_norm(x), freqs_cis)
             x = x + self.feed_forward(self.ffn_norm(x))
@@ -275,7 +291,9 @@ class FinalLayer(nn.Module):
         project each token to the output patch dimension.
         """
         # Exercise 6.4
-        ???
+        # TODO: Exercise 6.4
+        shift, scale = self.adaLN_modulation(c).chunk(2, dim=1)
+        x = modulate(self.norm_final(x), shift, scale)
         x = self.linear(x)
         return x
 
@@ -378,16 +396,22 @@ class DiT_Llama(nn.Module):
         self.freqs_cis = self.freqs_cis.to(x.device)
 
         # Exercise 6.5
-        x = ???
+        # TODO: Exercise 6.5
+        x = self.x_embedder(self.patchify(self.init_conv_seq(x)))
 
-        t = ???
-        y = ???
-        adaln_input = ???
+        # TODO: Exercise 6.5
+        t = self.t_embedder(t)
+        # TODO: Exercise 6.5
+        y = self.y_embedder(y, self.training)
+        # TODO: Exercise 6.5
+        adaln_input = t + y
 
         for layer in self.layers:
-            x = ???
+            # TODO: Exercise 6.5
+            x = layer(x, self.freqs_cis, adaln_input)
 
-        x = ???
+        # TODO: Exercise 6.5
+        x = self.unpatchify(self.final_layer(x, adaln_input))
 
         return x
 
