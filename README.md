@@ -56,6 +56,7 @@ We provide an overview of the submission requirements, score distribution, and d
      - [`models/modality_projector.py`](NanoVLM_Homework/models/modality_projector.py) with all required sections implemented.
      - [`models/language_model.py`](NanoVLM_Homework/models/language_model.py) with all required sections implemented.
      - [`models/vision_language_model.py`](NanoVLM_Homework/models/vision_language_model.py) with all required sections implemented.
+     - [`assets.zip`](/NanoVLM_Homework/notebooks/assets) file containing the required screenshot images.
 
 For **environment setup, training commands, and cluster (SCITAS/IZAR) usage** related to `nanoGPT`, `nanoMaskGIT`, and `nano4M`, please see the detailed instructions in [`NanoFM_Homeworks/README.md`](/NanoFM_Homeworks/README.md).
 
